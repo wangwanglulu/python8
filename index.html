@@ -504,7 +504,7 @@ class ElectricCar(Car):
                     </div>
                     <div class="fragment">
                         <pre><code class="line-numbers" data-trim contenteditable>
-y_tesla = ElectricCar('tesla', 'model s', 2016)
+my_tesla = ElectricCar('tesla', 'model s', 2016)
 print(my_tesla.get_descriptive_name())
 </code></pre>
                     </div>
@@ -957,7 +957,7 @@ class Person:
 
 class Child(Person):                          
     def __init__(self,name,sex,mother,father):
-        Person.__init__(self,name,sex)        
+        Person.__init__(self,name,sex)   #you cannot use super() here     
         self.mother = mother
         self.father = father
 
@@ -970,6 +970,156 @@ print(May.name,May.sex,May.mother,May.father)
 May female April June
 </code></pre>
                     </div>
+                </section>
+                <section>
+                    <p><b>Super(), Common Inheritance, and w/o __init__</b></p>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+class Person:
+    def __init__(self,name):
+        self.name = name        
+class Child(Person):                            
+    pass #w/o __init__
+if __name__ == '__main__':             
+    May = Child("May")
+    Peter = Person("Peter")
+    print(May.name,Peter.name) 
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+May Peter
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+class Person:
+    def __init__(self,name):
+        self.name = name
+        print(self.name) #add a print here        
+class Child(Person):                            
+    pass #w/o __init__
+if __name__ == '__main__':             
+    May = Child("May")
+    Peter = Person("Peter")
+    print(May.name,Peter.name) 
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+May
+Peter
+May Peter
+</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+class Person:
+    def __init__(self,name):
+        self.name = name
+        print(self.name) #add a print here        
+class Child(Person): 
+    def __init__(self,name):                           
+        super().__init__(name) # super(Child, self).__init__(name)
+if __name__ == '__main__':             
+    May = Child("May")
+    Peter = Person("Peter")
+    print(May.name,Peter.name) 
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+May
+Peter
+May Peter
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+class Person:
+    def __init__(self,name):
+        self.name = name
+        print(self.name) #add a print here       
+class Child(Person): 
+    def __init__(self,name):                           
+        self.name = name 
+if __name__ == '__main__':             
+    May = Child("May")
+    Peter = Person("Peter")
+    print(May.name,Peter.name) 
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+Peter
+May Peter
+</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+class Person:
+    def __init__(self,name):
+        self.name = name
+        print(self.name) #add a print here        
+class Child(Person): 
+    def __init__(self,name):                           
+        self.name = name 
+        print(self.name)
+if __name__ == '__main__':             
+    May = Child("May")
+    Peter = Person("Peter")
+    print(May.name,Peter.name) 
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+May
+Peter
+May Peter
+</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+class Person:
+    def __init__(self,name):
+        self.name = name
+        print(self.name) #add a print here       
+class Child(Person): 
+    def __init__(self,name):                           
+        Person.__init__(self, name)
+if __name__ == '__main__':             
+    May = Child("May")
+    Peter = Person("Peter")
+    print(May.name,Peter.name) 
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+May
+Peter
+May Peter
+</code></pre>
+                    </div>
+                    <ul>
+                        <li class="fragment">
+                            <p>Person. and super(). are almost the same <b>for the single inheritance</b>. Do not mix them together!</p>
+                        </li>
+                        <li class="fragment">
+                            <p>Without Person. super(), __init__ in the child class overwrites the __init__ in the parent class.</p>
+                        </li>
+                        <li class="fragment">
+                            <p>You would better use Person. or super() to inherit or extend the method of the parent class.</p>
+                        </li>
+                        <li class="fragment">
+                            <p>There is no so-called, "new-style-and-classic-classes" (新式类，经典类) in Python 3.x.</p>
+                        </li>
+                    </ul>
                 </section>
                 <section>
                     <ul>
