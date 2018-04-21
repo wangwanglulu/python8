@@ -957,7 +957,7 @@ class Person:
 
 class Child(Person):                          
     def __init__(self,name,sex,mother,father):
-        Person.__init__(self,name,sex)   #you cannot use super() here     
+        Person.__init__(self,name,sex)    
         self.mother = mother
         self.father = father
 
