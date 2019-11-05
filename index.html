@@ -25,11 +25,294 @@
         <div class="slides">
             <section data-background-video="bgm.mp4" data-background-video-loop data-background-video-muted style="text-align: left;">
                 <h2 style="color: white">Python Programming</h2>
-                <h5 style="color: white">Lecture 8 Modules, Object-Oriented Programming</h5>
+                <h5 style="color: white">Lecture 8 Decorator, Modules</h5>
+            </section>
+                        <section>
+                <section data-background="#2980b9" style="color: white">
+                    <h2 style="color: white">8.1 Functions (5)</h2>
+                    <p>Decorator</p>
+                </section>
+                <section>
+                    <ul>
+                        <li class="fragment">
+                            <p>Decorator Basics</p>
+                        </li>
+                    </ul>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+def shout(word="yes"):
+    return word.title()+"!"
+
+print(shout())
+# outputs : 'Yes!'
+
+scream = shout
+
+print(scream())
+# outputs : 'Yes!'
+
+del shout
+print(scream())
+# outputs: 'Yes!'
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+def talk():
+    def whisper(word="yes"):
+        return word.lower()+"..."
+    print(whisper())
+ 
+talk()
+# outputs: 
+# "yes..."
+# But "whisper" DOES NOT EXIST outside "talk":
+</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+def getTalk(kind="shout"):
+    def shout(word="yes"):
+        return word.title()+"!"
+    def whisper(word="yes") :
+        return word.lower()+"...";
+    if kind == "shout":
+        return shout  
+    else:
+        return whisper
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+talk = getTalk()      
+# You can see that "talk" is here a function object:
+print(type(talk))
+#outputs : function
+
+print(talk())
+#outputs : Yes!
+
+print(getTalk("whisper")())
+#outputs : yes...
+</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <ul>
+                        <li>
+                            <p>decorators are “wrappers”, which means that they let you execute code before and after the function they decorate without modifying the function itself.</p>
+                        </li>
+                    </ul>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+# A decorator is a function that expects ANOTHER function as parameter
+def my_shiny_new_decorator(a_function_to_decorate):
+    def the_wrapper_around_the_original_function():
+        print("Before the function runs")
+
+        a_function_to_decorate()
+
+        print("After the function runs")
+
+    return the_wrapper_around_the_original_function
+
+def a_stand_alone_function():
+    print("I am a stand alone function, don't you dare modify me")
+
+a_stand_alone_function() 
+#outputs: 
+I am a stand alone function, don't you dare modify me
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+a_stand_alone_function_decorated = my_shiny_new_decorator(a_stand_alone_function)
+a_stand_alone_function_decorated()
+#outputs:
+
+Before the function runs
+I am a stand alone function, don't you dare modify me
+After the function runs
+</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+@my_shiny_new_decorator
+def another_stand_alone_function():
+    print("Leave me alone")
+
+another_stand_alone_function()  
+#outputs:  
+Before the function runs
+Leave me alone
+After the function runs
+
+# @decorator is just a shortcut
+</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+def bread(func):
+    def wrapper():
+        print("</''''''\>")
+        func()
+        print("<\______/>")
+    return wrapper
+
+def ingredients(func):
+    def wrapper():
+        print("#tomatoes#")
+        func()
+        print("~salad~")
+    return wrapper
+
+def sandwich(food="--ham--"):
+    print(food)
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+sandwich()
+#outputs: --ham--
+sandwich = bread(ingredients(sandwich))
+sandwich()
+#outputs:
+</''''''\>
+ #tomatoes#
+ --ham--
+ ~salad~
+<\______/>
+</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+@bread
+@ingredients # The order matters here.
+def sandwich(food="--ham--"):
+    print(food)
+
+sandwich()
+#outputs:
+</''''''\>
+ #tomatoes#
+ --ham--
+ ~salad~
+<\______/>
+</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <ul>
+                        <li class="fragment">
+                            <p>Taking decorators to the next level</p>
+                        </li>
+                        <li class="fragment">
+                            <p>Passing arguments to the decorated function</p>
+                        </li>
+                    </ul>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+def a_decorator_passing_arguments(function_to_decorate):
+    def a_wrapper_accepting_arguments(arg1, arg2):
+        print("I got args! Look: %s, %s" % (arg1, arg2))
+        function_to_decorate(arg1, arg2)
+    return a_wrapper_accepting_arguments
+
+@a_decorator_passing_arguments
+def print_full_name(first_name, last_name):
+    print("My name is %s, %s" % (first_name, last_name))
+
+print_full_name("Peter", "Venkman")
+# outputs:
+I got args! Look: Peter Venkman
+My name is Peter Venkman
+</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <ul>
+                        <li class="fragment">
+                            <p>If you're making general-purpose decorator--one you'll apply to any function or method, no matter its arguments--then just use *args, **kwargs:</p>
+                        </li>
+                    </ul>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+def a_decorator_passing_arbitrary_arguments(function_to_decorate):
+    # The wrapper accepts any arguments
+    def a_wrapper_accepting_arbitrary_arguments(*args, **kwargs):
+        print("Do I have args?:")
+        print(args)
+        print(kwargs)
+        function_to_decorate(*args, **kwargs)
+    return a_wrapper_accepting_arbitrary_arguments
+
+@a_decorator_passing_arbitrary_arguments
+def function_with_no_argument():
+    print("Python is cool, no argument here.")
+
+function_with_no_argument()
+#outputs
+Do I have args?:
+()
+{}
+Python is cool, no argument here.
+</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+@a_decorator_passing_arbitrary_arguments
+def function_with_arguments(a, b, c):
+    print(a, b, c)
+
+function_with_arguments(1,2,3)
+#outputs
+Do I have args?:
+(1, 2, 3)
+{}
+1 2 3 
+</code></pre>
+                    </div>
+                    <div class="fragment">
+                        <pre><code class="line-numbers" data-trim contenteditable>
+@a_decorator_passing_arbitrary_arguments
+def function_with_named_arguments(a, b, c, platypus="Why not ?"):
+    print("Do {0}, {1} and {2} like platypus? {3}".format(a, b, c, platypus))
+
+function_with_named_arguments("Bill", "Linus", "Steve", platypus="Indeed!")
+#outputs
+Do I have args ? :
+('Bill', 'Linus', 'Steve')
+{'platypus': 'Indeed!'}
+Do Bill, Linus and Steve like platypus? Indeed! 
+</code></pre>
+                    </div>
+                    <ul>
+                        <li class="fragment">
+                            <p><a href="https://stackoverflow.com/questions/739654/how-to-make-a-chain-of-function-decorators/1594484#1594484">Decorator Basics</a></p>
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <div class="fragment"><img data-src="rf.png" style="height: 500pt"></div>
+                </section>
+                <section>
+                    <div class="fragment"><img data-src="de.png" style="height: 500pt"></div>
+                </section>
             </section>
             <section>
+
                 <section data-background="#2980b9" style="color: white">
-                    <h2 style="color: white">8.1 Modules</h2>
+                    <h2 style="color: white">8.2 Modules</h2>
                 </section>
                 <section>
                     <ul>
@@ -135,7 +418,7 @@ from module_name import *
                             </p>
                         </li>
                         <li class="fragment">
-                            <p>However, it’s best not to use this approach when you’re working with larger modules that you didn’t write: if the module has a function name that matches an existing name in your project, you can get some unexpected results.
+                            <p>However, it's best not to use this approach when you're working with larger modules that you didn't write: if the module has a function name that matches an existing name in your project, you can get some unexpected results.
                             </p>
                         </li>
                     </ul>
@@ -252,352 +535,7 @@ conda list
                     </div>
                 </section>
             </section>
-            <section>
-                <section data-background="#2980b9" style="color: white">
-                    <h2 style="color: white">8.2 Object-Oriented Programming</h2>
-                </section>
-                <section>
-                    <ul>
-                        <li class="fragment">
-                            <p>Object-oriented programming is one of the most effective approaches to writing software.</p>
-                        </li>
-                        <li class="fragment">
-                            <p>Python has been an object-oriented language since it existed. Because of this, creating and using classes and objects are downright easy.</p>
-                        </li>
-                        <li class="fragment">
-                            <p>Understanding object-oriented programming will help you see the world as a programmer does. It’ll help you really know your code, not just what’s happening line by line, but also the bigger concepts behind it.</p>
-                        </li>
-                    </ul>
-                </section>
-                <section>
-                    <ul>
-                        <li class="fragment">
-                            <p>Creating and Using a Class</p>
-                        </li>
-                    </ul>
-                    <div class="fragment">
-                        <pre><code class="line-numbers" data-trim contenteditable>
-class Dog():
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-
-    def sit(self):
-        print(self.name.title() + " is now sitting.")
-
-    def roll_over(self):
-        print(self.name.title() + " rolled over!")
-</code></pre>
-                    </div>
-                    <ul>
-                        <li class="fragment">
-                            <p>By convention, capitalized names refer to classes in Python.</p>
-                        </li>
-                        <li class="fragment">
-                            <p>A function that’s part of a class is a method.</p>
-                        </li>
-                        <li class="fragment">
-                            <p>The __init__() method is a special method Python runs automatically whenever we create a new instance based on the Dog class.</p>
-                        </li>
-                        <li class="fragment">
-                            <p>Variables that are accessible through instances like this are called <b>attributes</b>.</p>
-                        </li>
-                    </ul>
-                </section>
-                <section>
-                    <div class="fragment"><img data-src="dog.png" style="height: 500pt"></div>
-                </section>
-                <section data-background-image="bg.png">
-                    <div id='left'>
-                        <ul>
-                            <li class="fragment">
-                                <p>Making an Instance from a Class</p>
-                            </li>
-                        </ul>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-class Dog():
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-
-    def sit(self):
-        print(self.name.title() 
-            + " is now sitting.")
-
-    def roll_over(self):
-        print(self.name.title() 
-            + " rolled over!")
-</code></pre>
-                        </div>
-                    </div>
-                    <div id='right'>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-my_dog = Dog('willie', 6)
-
-print("My dog's name is " 
-    + my_dog.name.title() + ".")
-print("My dog is " 
-    + str(my_dog.age) + " years old.")
-</code></pre>
-                        </div>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-My dog's name is Willie.
-My dog is 6 years old.
-</code></pre>
-                        </div>
-                    </div>
-                    <ul>
-                        <li class="fragment">
-                            <p>my_dog.name</p>
-                        </li>
-                        <li class="fragment">
-                            <p>my_dog.age</p>
-                        </li>
-                    </ul>
-                </section>
-                <section data-background-image="bg.png">
-                    <div id='left'>
-                        <ul>
-                            <li class="fragment">
-                                <p>Creating Multiple Instances</p>
-                            </li>
-                        </ul>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-class Dog():
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-
-    def sit(self):
-        print(self.name.title() 
-            + " is now sitting.")
-
-    def roll_over(self):
-        print(self.name.title() 
-            + " rolled over!")
-</code></pre>
-                        </div>
-                    </div>
-                    <div id='right'>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-my_dog.sit()
-my_dog.roll_over()
-</code></pre>
-                        </div>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-Willie is now sitting.
-Willie rolled over!
-</code></pre>
-                        </div>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-my_dog = Dog('willie', 6)
-your_dog = Dog('lucy', 3)
-</code></pre>
-                        </div>
-                    </div>
-                </section>
-                <section>
-                    <ul>
-                        <li class="fragment">
-                            <p>Working with Classes and Instances</p>
-                        </li>
-                    </ul>
-                    <div class="fragment">
-                        <pre><code class="line-numbers" data-trim contenteditable>
-class Car():
-    def __init__(self, make, model, year):
-        self.make = make
-        self.model = model
-        self.year = year
-        self.odometer_reading = 0
-
-    def get_descriptive_name(self):
-        long_name = str(self.year) + ' ' + self.make + ' ' 
-        + self.model
-        return long_name.title()
-
-    def read_odometer(self):
-        print("This car has " + str(self.odometer_reading) 
-            + " miles on it.")
-</code></pre>
-                    </div>
-                    <div class="fragment">
-                        <pre><code class="line-numbers" data-trim contenteditable>
-my_new_car = Car('audi', 'a4', 2016)
-print(my_new_car.get_descriptive_name())
-my_new_car.read_odometer()
-</code></pre>
-                    </div>
-                    <div class="fragment">
-                        <pre><code class="line-numbers" data-trim contenteditable>
-2016 Audi A4
-This car has 0 miles on it.
-</code></pre>
-                    </div>
-                </section>
-                <section data-background-image="bg.png">
-                    <div id='leftc'>
-                        <ul>
-                            <li class="fragment">
-                                <p>Modifying Attribute Values</p>
-                            </li>
-                        </ul>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-class Car():
-    def __init__(self, make, model, year):
-        self.make = make
-        self.model = model
-        self.year = year
-        self.odometer_reading = 0
-
-    def read_odometer(self):
-        print("This car has " 
-            + str(self.odometer_reading) 
-            + " miles on it.")
-</code></pre>
-                        </div>
-                    </div>
-                    <div id='rightc'>
-                        <ul>
-                            <li class="fragment">
-                                <p>Modifying an Attribute’s Value Directly</p>
-                            </li>
-                        </ul>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-my_new_car.odometer_reading = 23
-my_new_car.read_odometer()
-</code></pre>
-                        </div>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-2016 Audi A4
-This car has 23 miles on it.
-</code></pre>
-                        </div>
-                    </div>
-                </section>
-                <section data-background-image="bg.png">
-                    <div id='leftc'>
-                        <ul>
-                            <li class="fragment">
-                                <p>Modifying Attribute Values</p>
-                            </li>
-                        </ul>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-class Car():
-    def __init__(self, make, model, year):
-        self.make = make
-        self.model = model
-        self.year = year
-        self.odometer_reading = 0
-
-    def read_odometer(self):
-        print("This car has " 
-            + str(self.odometer_reading) 
-            + " miles on it.")
-
-    def update_odometer(self, mileage):
-        self.odometer_reading = mileage
-</code></pre>
-                        </div>
-                    </div>
-                    <div id='rightc'>
-                        <ul>
-                            <li class="fragment">
-                                <p>Modifying an Attribute’s Value Through a Method</p>
-                            </li>
-                        </ul>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-my_new_car = Car('audi', 'a4', 2016)
-my_new_car.update_odometer(23)
-my_new_car.read_odometer()
-</code></pre>
-                        </div>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-This car has 23 miles on it.
-</code></pre>
-                        </div>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-my_new_car.update_odometer(30)
-my_new_car.read_odometer()
-</code></pre>
-                        </div>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-This car has 30 miles on it.
-</code></pre>
-                        </div>
-                    </div>
-                </section>
-                <section data-background-image="bg.png">
-                    <div id='leftc'>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-class Car():
-    def __init__(self, make, model, year):
-        self.make = make
-        self.model = model
-        self.year = year
-        self.odometer_reading = 0
-
-    def read_odometer(self):
-        print("This car has " 
-            + str(self.odometer_reading) 
-            + " miles on it.")
-
-    def update_odometer(self, mileage):
-        self.odometer_reading = mileage
-
-    def increment_odometer(self, miles):
-        self.odometer_reading += miles
-</code></pre>
-                        </div>
-                    </div>
-                    <div id='rightc'>
-                        <ul>
-                            <li class="fragment">
-                                <p>Modifying an Attribute’s Value Through a Method</p>
-                            </li>
-                        </ul>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-my_new_car = Car('audi', 'a4', 2016)
-my_new_car.update_odometer(23)
-my_new_car.read_odometer()
-</code></pre>
-                        </div>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-This car has 23 miles on it.
-</code></pre>
-                        </div>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-my_used_car.increment_odometer(100)
-my_used_car.read_odometer()
-</code></pre>
-                        </div>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-This car has 123 miles on it.
-</code></pre>
-                        </div>
-                    </div>
-                </section>
-            </section>
+            
             <section>
                 <section data-background="#2c3e50" style="color: white; text-align: left;">
                     <h2 style="color: white">Summary</h2>
