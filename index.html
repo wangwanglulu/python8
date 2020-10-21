@@ -721,8 +721,8 @@ stuff = list()
 stuff.append('python')
 stuff.append('chuck')
 stuff.sort()
-print (stuff[0])
 
+print (stuff[0])
 print (stuff.__getitem__(0))
 print (list.__getitem__(stuff,0))
 </code></pre>
@@ -738,7 +738,7 @@ chuck
                 <section>
                     <ul>
                         <li class="fragment">
-                            <p><b>Actually, the class you create inherits the ``object'' class.</b></p>
+                            <p><b>Actually, the class you create inherits the "object" class.</b></p>
                         </li>
                         <li class="fragment">
                             <p>Classes can intercept Python Operators</p>
@@ -763,82 +763,12 @@ print(dir(my_dog))
 ['__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__',
  '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', 
  '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__',
-  '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 
-  'age', 'name']
+ '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 
+'age', 'name']
 </code></pre>
                     </div>
                 </section>
-                <section data-background-image="bg.png">
-                    <div class="div-c">
-                        <ul>
-                            <li class="fragment">
-                                <p><b>__str__</b></p>
-                            </li>
-                        </ul>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-class Dog():
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-
-my_dog = Dog('willie', 6)
-print(my_dog)
-</code></pre>
-                        </div>
-                        <div class="fragment">
-                            <pre><code class="output" data-trim contenteditable>
-<__main__.Dog object at 0x053A3750>
-</code></pre>
-                        </div>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-class Dog():
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-    def __str__(self):
-        return self.name  
-
-my_dog = Dog('willie', 6)
-print(my_dog)
-</code></pre>
-                        </div>
-                        <div class="fragment">
-                            <pre><code class="output" data-trim contenteditable>
-willie.
-</code></pre>
-                        </div>
-                    </div>
-                    <div class="div-d">
-                        <ul>
-                            <li class="fragment">
-                                <p><b>__add__</b></p>
-                            </li>
-                        </ul>
-                        <div class="fragment">
-                            <pre><code class="line-numbers" data-trim contenteditable>
-class Dog():
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-
-    def __add__(self, other):
-        return self.name + other
-
-my_dog = Dog('willie', 6)
-x = my_dog +' your_dog' 
-
-print(x)
-</code></pre>
-                        </div>
-                        <div class="fragment">
-                            <pre><code class="output" data-trim contenteditable>
-willie your_dog
-</code></pre>
-                        </div>
-                    </div>
-                </section>
+                
                 <section data-background-image="bg.png">
                     <ul>
                         <li class="fragment">
